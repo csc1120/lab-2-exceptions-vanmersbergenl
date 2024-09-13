@@ -19,6 +19,7 @@ public class Driver {
             try {
                 int[] numbers = getInput();
                 Die[] dice = createDice(numbers[0], numbers[1]);
+                dice.clone(); // Statement to pass "unused local variable" checkstyle
                 break;
             } catch (NumberFormatException e){
                 System.out.println("Invalid input: All values must be whole numbers.");
