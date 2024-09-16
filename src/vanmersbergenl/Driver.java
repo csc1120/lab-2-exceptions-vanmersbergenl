@@ -15,11 +15,12 @@ import java.util.Scanner;
 public class Driver {
     public static void main(String[] args) {
         // Executes indefinitely until a valid set of Integers is input
+        int[] inputs;
+        Die[] dice;
         while(true) {
             try {
-                int[] numbers = getInput();
-                Die[] dice = createDice(numbers[0], numbers[1]);
-                dice.clone(); // Statement to pass "unused local variable" checkstyle
+                inputs = getInput();
+                dice = createDice(inputs[0], inputs[1]);
                 break;
             } catch (NumberFormatException e){
                 System.out.println("Invalid input: All values must be whole numbers.");
@@ -27,6 +28,8 @@ public class Driver {
                 System.out.println(e.getMessage());
             }
         }
+        int[] results = rollDice(dice, inputs[1], inputs[2]);
+        System.out.println(findMax(results));
     }
     private static int[] getInput(){
         System.out.println("Please enter the number of dice to roll, how many sides the " +
@@ -50,5 +53,26 @@ public class Driver {
             dice[i] = new Die(sides);
         }
         return dice;
+    }
+    private static int[] rollDice(Die[] dice, int numSides, int numRolls){
+        int[] results = new int[numSides * dice.length];
+        for(int i = 0; i < numRolls; ++i){
+            int roll = 0;
+            for(Die die : dice){
+                die.roll();
+                roll += die.getCurrentValue();
+            }
+            results[roll-dice.length]++;
+        }
+        return results;
+    }
+    private static int findMax(int[] results){
+        int max = 0;
+        for(int result : results){
+            if(result > max){
+                max = result;
+            }
+        }
+        return max;
     }
 }
