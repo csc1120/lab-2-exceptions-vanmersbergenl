@@ -29,7 +29,8 @@ public class Driver {
             }
         }
         int[] results = rollDice(dice, inputs[1], inputs[2]);
-        System.out.println(findMax(results));
+        //System.out.println(findMax(results));
+        report(inputs[0], results, findMax(results));
     }
     private static int[] getInput(){
         System.out.println("Please enter the number of dice to roll, how many sides the " +
@@ -55,7 +56,9 @@ public class Driver {
         return dice;
     }
     private static int[] rollDice(Die[] dice, int numSides, int numRolls){
-        int[] results = new int[numSides * dice.length];
+
+        int[] results = new int[numSides * dice.length - (dice.length-1)];
+
         for(int i = 0; i < numRolls; ++i){
             int roll = 0;
             for(Die die : dice){
@@ -68,11 +71,21 @@ public class Driver {
     }
     private static int findMax(int[] results){
         int max = 0;
-        for(int result : results){
-            if(result > max){
-                max = result;
+        for(int rolls : results){
+            if(rolls > max){
+                max = rolls;
             }
         }
         return max;
+    }
+    private static void report(int numDice, int[] rolls, int max){
+        final int scale = max / 10;
+        for(int i = 0; i < rolls.length; ++i){
+            System.out.printf("%-2d:%-10d ", i + numDice, rolls[i]);
+            for(int j = 0; j<rolls[i]/scale; ++j){
+                System.out.print('*');
+            }
+            System.out.println();
+        }
     }
 }
