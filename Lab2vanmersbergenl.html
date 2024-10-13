@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>vanmersbergenl</title>
+  </head>
+  <body>
+    <xmp
+>
+# Lab 2 - Exceptions
+
+>> | Earned | Possible | Criteria                                         |
+>> | ------ | -------- | ------------------------------------------------ |
+>> |   15   |    15    | Intermediate Commits                             |
+>> |   60   |    60    | Technical quality (see point deductions in code) |
+>> |   15   |    15    | Coding standard compliance and program clarity   |
+>> |   10   |    10    | Following submission instructions                |
+>
+> # Feedback
+> * Nice work!
+
+
+# Die.java
+
+```
+/*
+ * Course: CSC1020
+ * Lab 2 - Exceptions
+ * Die class
+ * Name: Landon Van Mersbergen
+ * Last Updated: 9/12/2024
+ */
+package vanmersbergenl;
+
+import java.util.Random;
+
+/**
+ * Die class used for creating dice
+ */
+public class Die {
+    /**
+     * the minimum number of sides a die can have
+     */
+    public static final int MIN_SIDES = 2;
+    /**
+     * the maximum number of sides a die can have
+     */
+    public static final int MAX_SIDES = 100;
+    private int currentValue = 0;
+    private int numSides;
+    private final Random random = new Random();
+
+    /**
+     * Creates a new Die
+     * @param numSides the number of sides for the die
+     * @throws IllegalArgumentException when numSides is out of bounds
+     */
+    public Die(int numSides) throws IllegalArgumentException {
+        if(numSides > MAX_SIDES || numSides < MIN_SIDES){
+            throw new IllegalArgumentException("Bad die creation: " +
+                    "Illegal number of sides: " + numSides);
+        }
+        this.numSides = numSides;
+    }
+
+    /**
+     * Gets the current value of the die
+     * @return the currentValue of the die after the last roll
+     * @throws DieNotRolledException if currentValue was already returned or called before rolling
+     */
+    public int getCurrentValue() throws DieNotRolledException {
+        if (currentValue == 0){
+            throw new DieNotRolledException();
+        }
+        int temp = currentValue;
+        currentValue = 0;
+        return temp;
+    }
+
+    /**
+     * Rolls the Die. Sets the current value to a number between 1 and the number of sides
+     */
+```
+> #### -2 Wrong API invocation
+> The correct way to generate a random number between 1 and numSides is to use: random.nextInt(numSides) + 1
+
+```
+
+    public void roll(){
+        currentValue = random.nextInt(0, numSides) + 1;
+    }
+}
+```
+
+# Driver.java
+
+```
+/*
+ * Course: CSC1020
+ * Lab 2 - Exceptions
+ * Main Driver class
+ * Name: Landon Van Mersbergen
+ * Last Updated: 9/12/2024
+ */
+package vanmersbergenl;
+
+import java.util.Scanner;
+
+/**
+ * The main class
+ */
+public class Driver {
+    public static void main(String[] args) {
+        // Executes indefinitely until a valid set of Integers is input
+        int[] inputs;
+        Die[] dice;
+```
+> #### break statement
+> Do not use while(true) with break statement. You should specify the loop condition and termination more clearly.
+
+```
+        while(true) {
+            try {
+                inputs = getInput();
+                dice = createDice(inputs[0], inputs[1]);
+                break;
+            } catch (NumberFormatException e){
+                System.out.println("Invalid input: All values must be whole numbers.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        int[] results = rollDice(dice, inputs[1], inputs[2]);
+        //System.out.println(findMax(results));
+        report(inputs[0], results, findMax(results));
+    }
+
+```
+> #### 
+> Modify the getInput() method to loop until valid input is provided. You can use a do-while loop.
+
+```
+    private static int[] getInput(){
+        System.out.println("Please enter the number of dice to roll, how many sides the " +
+                "dice have, \nand how many rolls to complete, separating the values by a space.");
+        System.out.println("Example: \"2 6 1000\"\n");
+        System.out.print("Enter configuration:");
+        int[] numbers = new int[3];
+        Scanner in = new Scanner(System.in);
+        String[] tokens = in.nextLine().split("\\s"); // Split by whitespace
+        if(tokens.length < 3) {
+            throw new IllegalArgumentException("Expected 3 arguments but found " + tokens.length);
+        }
+        for (int i = 0; i <= 2; ++i) {
+            numbers[i] = Integer.parseInt(tokens[i]);
+        }
+        return numbers;
+    }
+    private static Die[] createDice(int numberOfDice, int sides){
+        Die[] dice = new Die[numberOfDice];
+        for(int i = 0; i < numberOfDice; ++i){
+            dice[i] = new Die(sides);
+        }
+        return dice;
+    }
+    private static int[] rollDice(Die[] dice, int numSides, int numRolls){
+
+        int[] results = new int[numSides * dice.length - (dice.length-1)];
+
+        for(int i = 0; i < numRolls; ++i){
+            int roll = 0;
+            for(Die die : dice){
+                die.roll();
+                roll += die.getCurrentValue();
+            }
+            results[roll-dice.length]++;
+        }
+        return results;
+    }
+    private static int findMax(int[] results){
+        int max = 0;
+        for(int rolls : results){
+            if(rolls > max){
+                max = rolls;
+            }
+        }
+        return max;
+    }
+    private static void report(int numDice, int[] rolls, int max){
+        final int scale = max / 10;
+        for(int i = 0; i < rolls.length; ++i){
+            System.out.printf("%-2d:%-10d ", i + numDice, rolls[i]);
+            for(int j = 0; j<rolls[i]/scale; ++j){
+                System.out.print('*');
+            }
+            System.out.println();
+        }
+    }
+}
+
+```
+
+</xmp
+    >
+    <script
+      type="text/javascript"
+      src="https://csse.msoe.us/gradedown.js"
+    ></script>
+  </body>
+</html>
